@@ -1,8 +1,10 @@
 "use client";
 import {useQuery} from "@tanstack/react-query";
 import {useParams} from 'next/navigation'
-import {getArticleBySlug} from "@/app/actions/article";
+import {getArticleBySlug, getArticles} from "@/app/actions/article";
 import {ReactNode} from "react";
+import Link from "next/link";
+import {Button} from "@/components/ui/button";
 
 //
 // type BlockType = {
@@ -60,6 +62,27 @@ export default function ArticleRenderer() {
         queryFn: () => getArticleBySlug(slug)
     });
 
+    // get next and previous articles
+    const {data: articlesData} = useQuery({
+        queryKey: ['articles'],
+        queryFn: () => getArticles()
+    });
+
+    // find index of current article
+    const currentIndex = articlesData ?
+        articlesData.findIndex(article => article.slug === slug)
+        : -1;
+
+    // get previous article
+    const previousArticle = (articlesData && currentIndex > 0) ?
+        articlesData[currentIndex - 1]
+        : null;
+
+    // get next article
+    const nextArticle = (articlesData && currentIndex < articlesData.length - 1)
+        ? articlesData[currentIndex + 1]
+        : null;
+
 
     return <div>
         {isLoading && <p>Loading article...</p>}
@@ -108,5 +131,28 @@ export default function ArticleRenderer() {
                 })}
             </article>
         )}
+
+        <div className="flex justify-between mt-8 pb-16">
+            {previousArticle ? (
+                <Button asChild>
+                    <Link
+                        href={`/articles/${previousArticle.slug}`}
+                        className="text-blue-600 hover:underline"
+                    >
+                        &larr; {previousArticle.title}
+                    </Link>
+                </Button>
+            ) : <div/>}
+            {nextArticle ? (
+                <Button asChild>
+                    <Link
+                        href={`/articles/${nextArticle.slug}`}
+                        className="text-blue-600 hover:underline"
+                    >
+                        {nextArticle.title} &rarr;
+                    </Link>
+                </Button>
+            ) : <div/>}
+        </div>
     </div>;
 }
