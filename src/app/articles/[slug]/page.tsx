@@ -1,5 +1,5 @@
 import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
-import {getArticleBySlug, getAuthorBySlug} from "@/app/actions/article";
+import {getArticleBySlug, getArticles, getAuthorBySlug} from "@/app/actions/article";
 import ArticleRenderer from "@/app/articles/[slug]/ArticleRenderer";
 import {Metadata} from "next";
 
@@ -27,6 +27,15 @@ export async function generateMetadata(
             {name: author.name, url: "/user/" + author.id}
         ],
     }
+}
+
+export async function generateStaticParams() {
+    const allArticles = await getArticles();
+    //allArticleRoutes
+
+    return allArticles.map((article) => {
+        return {slug: article.slug}
+    })
 }
 
 export default async function ArticleSlugPage(
