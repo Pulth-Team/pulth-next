@@ -1,8 +1,19 @@
 import {ListItemType} from "@/schemas/EditorTypes"
+import IntrinsicAttributes = React.JSX.IntrinsicAttributes;
 
-function ListItem() {
-    return <li>
-        hi
+function ListItem(props: IntrinsicAttributes & { item: ListItemType, style: "ordered" | "unordered" | "checklist" }) {
+    return <li className={" [counter-increment: item] before:content-[counter(item)'. ']"}>
+        {
+            "checked" in props.item.meta && <input checked={props.item.meta.checked} type="checkbox" readOnly/>
+        }
+
+        {props.item.content}
+
+
+        {
+            // there is a list under this item
+            props.item.items && <ListRenderer items={props.item.items} style={"ordered"} meta={props.item.meta}/>
+        }
     </li>;
 }
 
@@ -30,37 +41,19 @@ export default function ListRenderer(props: {
                            ) : "1"
                        }
             >
-                {props.items.map((item, index) => {
-                    return <li key={index}>
-                        {item.content}
-
-                        {
-                            item.items && <ListRenderer items={item.items} style={"ordered"} meta={item.meta}/>
-                        }
-                    </li>
+                {props.items.map((listItem, index) => {
+                    return <ListItem item={listItem} key={index} style={"ordered"}/>
                 })}
             </ol>;
         case "unordered":
             return <ul>
                 {props.items.map((item, index) => {
-                    return <li key={index}>
-                        {item.content}
-
-                        {
-                            item.items && <ListRenderer items={item.items} style={"unordered"} meta={item.meta}/>
-                        }
-                    </li>
+                    return <ListItem item={item} key={index} style={"unordered"}/>
                 })}
             </ul>
         case "checklist":
             return <ul>{props.items.map((item, index) => {
-                return <li key={index}>
-                    <input type="checkbox" checked={item.meta.checked!} readOnly={true}/>
-                    {item.content}
-                    {
-                        item.items && <ListRenderer items={item.items} style={"checklist"} meta={item.meta}/>
-                    }
-                </li>
+                return <ListItem item={item} key={index} style={"checklist"}/>
             })}</ul>;
 
     }
