@@ -55,3 +55,17 @@ export async function publishArticle(slug: string, body: BlockWithFallback[]) {
 
     return updateRes;
 }
+
+export async function getTagsOnArticleBySlug(slug: string) {
+    return prisma.tagsOnArticles.findMany({
+        where: {
+            article: {
+                slug: slug
+            }
+        },
+        include: {
+            article: true,
+            topic: true
+        }
+    });
+}

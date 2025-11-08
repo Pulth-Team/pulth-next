@@ -1,7 +1,8 @@
 import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
-import {getArticleBySlug, getArticles, getAuthorBySlug} from "@/app/actions/article";
+import {getArticleBySlug, getArticles, getAuthorBySlug, getTagsOnArticleBySlug} from "@/app/actions/article";
 import ArticleRenderer from "@/app/articles/[slug]/ArticleRenderer";
 import {Metadata} from "next";
+import TagList from "@/app/articles/[slug]/TagList";
 
 export async function generateMetadata(
     {
@@ -53,16 +54,22 @@ export default async function ArticleSlugPage(
         queryFn: () => getArticleBySlug(slug)
     });
 
-    const authorPrefetch = await queryClient.prefetchQuery({
+    const authorPrefetch = queryClient.prefetchQuery({
         queryKey: ["articles", "author", slug],
         queryFn: () => getAuthorBySlug(slug)
     })
 
-    await Promise.all([articlePrefetch, authorPrefetch]);
+    const tagsPrefecth = queryClient.prefetchQuery({
+        queryKey: ["articles", slug, "tags"],
+        queryFn: () => getTagsOnArticleBySlug(slug)
+    })
+
+    await Promise.all([articlePrefetch, authorPrefetch, tagsPrefecth]);
 
     return <div className="select-text dark:selection:text-indigo-500">
         <HydrationBoundary state={dehydrate(queryClient)}>
             <ArticleRenderer/>
+            <TagList/>
         </HydrationBoundary>
         <div>Comments:</div>
     </div>
