@@ -27,8 +27,6 @@ export default function ListRenderer(props: {
         counterType: "numeric" | "lower-roman" | "upper-roman" | "lower-alpha" | "upper-alpha"
     } | {}
 }) {
-    // return <pre className={"bg-red-400"}>{props.style}</pre>
-    console.log(props)
     switch (props.style) {
         case "ordered":
             return <ol className={""}
