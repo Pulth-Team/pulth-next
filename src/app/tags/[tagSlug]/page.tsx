@@ -1,51 +1,91 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
+import type { Metadata, ResolvingMetadata } from "next";
 
 export async function generateStaticParams() {
-    const allTags = await prisma.topic.findMany({});
-    //allArticleRoutes
+  const allTags = await prisma.topic.findMany({});
+  //allArticleRoutes
 
-    return allTags.map((tag) => {
-        return {tagSlug: tag.slug}
-    })
+  return allTags.map((tag) => {
+    return { tagSlug: tag.slug };
+  });
 }
 
-export default async function TagSlugPage(props: PageProps<'/tags/[tagSlug]'>) {
-    const {tagSlug} = await props.params;
+export async function generateMetadata(
+  { params, searchParams }: PageProps<"/tags/[tagSlug]">,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  // read route params
+  const { tagSlug } = await params;
 
-    const topic = await prisma.topic.findUnique({
-        where: {
-            slug: tagSlug
-        }
-    })
+  const topic = await prisma.topic.findUnique({
+    where: {
+      slug: tagSlug,
+    },
+  });
 
-    if (!topic)
-        throw new Error("No topic specified");
+  // fetch data
+  //
+  // optionally access and extend (rather than replace) parent metadata
+  const previousImages = (await parent).openGraph?.images || [];
 
-    const taggedArticles = await prisma.tagsOnArticles.findMany({
-        where: {
-            topic: {
-                slug: tagSlug
-            }
-        },
-        include: {
-            article: true
-        },
-    })
+  return {
+    title: '"' + (topic?.name ?? "") + '" tagged articles | Pulth',
+    description:
+      topic?.description ?? `'${topic?.name ?? ""}' tagged articles | Pulth`,
+    // openGraph: {
+    //   images: ["/some-specific-page-image.jpg", ...previousImages],
+    // },
+  };
+}
 
-    return <div className="container max-w-screen-lg mx-auto">
-        <h1 className={"dark text-3xl my-16"}> "{topic.name}" tagged articles:</h1>
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {taggedArticles.map((taggedArticle) =>
-                (<div key={taggedArticle.article.id} className="border p-4 mb-4 rounded">
-                    {/*<Button variant={"link"} asChild={true}>*/}
-                    <Link href={`/articles/${taggedArticle.article.slug}`}>
-                        <h2 className="text-xl font-bold mb-4 hover:underline line-clamp-1">{taggedArticle.article.title}</h2>
-                    </Link>
-                    {/*</Button>*/}
-                    <p className={"max-w-3/4 line-clamp-4"}>{taggedArticle.article.description}</p>
-                </div>)
-            )}
-        </div>
+export default async function TagSlugPage(props: PageProps<"/tags/[tagSlug]">) {
+  const { tagSlug } = await props.params;
+
+  const topic = await prisma.topic.findUnique({
+    where: {
+      slug: tagSlug,
+    },
+  });
+
+  if (!topic) throw new Error("No topic specified");
+
+  const taggedArticles = await prisma.tagsOnArticles.findMany({
+    where: {
+      topic: {
+        slug: tagSlug,
+      },
+    },
+    include: {
+      article: true,
+    },
+  });
+
+  return (
+    <div className="container max-w-screen-lg mx-auto">
+      <h1 className={"dark text-3xl my-16"}>
+        {" "}
+        "{topic.name}" tagged articles:
+      </h1>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {taggedArticles.map((taggedArticle) => (
+          <div
+            key={taggedArticle.article.id}
+            className="border p-4 mb-4 rounded"
+          >
+            {/*<Button variant={"link"} asChild={true}>*/}
+            <Link href={`/articles/${taggedArticle.article.slug}`}>
+              <h2 className="text-xl font-bold mb-4 hover:underline line-clamp-1">
+                {taggedArticle.article.title}
+              </h2>
+            </Link>
+            {/*</Button>*/}
+            <p className={"max-w-3/4 line-clamp-4"}>
+              {taggedArticle.article.description}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
+  );
 }
