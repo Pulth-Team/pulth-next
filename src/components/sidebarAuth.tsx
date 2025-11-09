@@ -30,109 +30,115 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
-import {useSession, getSession} from "@/lib/auth-client";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {Button} from "@/components/ui/button";
+import {useSession, getSession, signOut} from "@/lib/auth-client";
+import {useRouter} from "next/navigation";
+import {
+    AlertDialog, AlertDialogAction, AlertDialogCancel,
+    AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 
-export function NavUser() {
-    const {isMobile} = useSidebar()
-    const {data, isPending, error} = useSession();
-
-    if (isPending)
-        return <div>Loading...</div>;
-
-    console.log("data", data)
-    if (!isPending && data == null)
-        // TODO implement newsletter
-        return <Card className="gap-2 py-4 shadow-none">
-            <CardHeader className="px-4">
-                <CardTitle className="text-sm">Subscribe to our newsletter</CardTitle>
-                <CardDescription>
-                    Opt-in to receive updates and news about the sidebar.
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="px-4">
-                <form>
-                    <div className="grid gap-2.5">
-                        <SidebarInput type="email" placeholder="Email"/>
-                        <Button
-                            className="bg-sidebar-primary text-sidebar-primary-foreground w-full shadow-none"
-                            size="sm"
-                        >
-                            Subscribe
-                        </Button>
-                    </div>
-                </form>
-            </CardContent>
-        </Card>;
+export function NavUser(props: { image: string, name: string, email: string, id: string }) {
+    const {isMobile,} = useSidebar();
+    const router = useRouter();
 
     return (
         <SidebarMenu>
             <SidebarMenuItem>
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <SidebarMenuButton
-                            size="lg"
-                            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                        >
-                            <Avatar className="h-8 w-8 rounded-lg">
-                                {/*<AvatarImage src={sessionData.user.image} alt={sessionData.user.name}/>*/}
-                                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-                            </Avatar>
-                            <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">{data?.user.name}</span>
-                                <span className="truncate text-xs">{data?.user.email}</span>
-                            </div>
-                            <ChevronsUpDown className="ml-auto size-4"/>
-                        </SidebarMenuButton>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                        className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-                        side={isMobile ? "bottom" : "right"}
-                        align="end"
-                        sideOffset={4}
-                    >
-                        <DropdownMenuLabel className="p-0 font-normal">
-                            <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                <AlertDialog>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <SidebarMenuButton
+                                size="lg"
+                                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                            >
                                 <Avatar className="h-8 w-8 rounded-lg">
-                                    {/*<AvatarImage src={data?.user.image} alt={data?.user.name}/>*/}
+                                    <AvatarImage src={props.image || "/default.jpg"} alt={props.name}/>
                                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-medium">{data?.user.name}</span>
-                                    <span className="truncate text-xs">{data?.user.email}</span>
+                                    <span className="truncate font-medium">{props.name}</span>
+                                    <span className="truncate text-xs">{props.email}</span>
                                 </div>
-                            </div>
-                        </DropdownMenuLabel>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <Sparkles/>
-                                Upgrade to Pro
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <BadgeCheck/>
-                                Account
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <CreditCard/>
-                                Billing
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Bell/>
-                                Notifications
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuItem>
-                            <LogOut/>
-                            Log out
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                                <ChevronsUpDown className="ml-auto size-4"/>
+                            </SidebarMenuButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                            side={isMobile ? "bottom" : "right"}
+                            align="end"
+                            sideOffset={4}
+                        >
+                            <DropdownMenuLabel className="p-0 font-normal">
+                                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                                    <Avatar className="h-8 w-8 rounded-lg">
+                                        {/*<AvatarImage src={data?.user.image} alt={data?.user.name}/>*/}
+                                        <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                    </Avatar>
+                                    <div className="grid flex-1 text-left text-sm leading-tight">
+                                        <span className="truncate font-medium">{props.name}</span>
+                                        <span className="truncate text-xs">{props.email}</span>
+                                    </div>
+                                </div>
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator/>
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem>
+                                    <Sparkles/>
+                                    Upgrade to Pro
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            <DropdownMenuSeparator/>
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem>
+                                    <BadgeCheck/>
+                                    Account
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <CreditCard/>
+                                    Billing
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Bell/>
+                                    Notifications
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            <DropdownMenuSeparator/>
+
+
+                            <AlertDialogTrigger asChild>
+                                <DropdownMenuItem>
+                                    <LogOut/>
+                                    Log out
+                                </DropdownMenuItem>
+                            </AlertDialogTrigger>
+
+
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot will logout from your account. This will make us miss you a lot.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <form>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction type={"submit"} onClick={async () => {
+                                    await signOut();
+                                    router.refresh()
+
+                                }}>Log off</AlertDialogAction>
+                            </form>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+
             </SidebarMenuItem>
         </SidebarMenu>
     )

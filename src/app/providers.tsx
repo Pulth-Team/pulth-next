@@ -9,6 +9,7 @@ import {
 import {ThemeProvider} from "next-themes";
 import {SidebarProvider} from "@/components/ui/sidebar";
 
+
 function makeQueryClient() {
     return new QueryClient({
         defaultOptions: {
@@ -44,6 +45,7 @@ export default function Providers({children}: { children: React.ReactNode }) {
     //       render if it suspends and there is no boundary
     const queryClient = getQueryClient()
 
+
     return (
         <ThemeProvider
             attribute="class"
@@ -51,11 +53,9 @@ export default function Providers({children}: { children: React.ReactNode }) {
             enableSystem
             disableTransitionOnChange
         >
-            <SidebarProvider defaultOpen={true}>
-                <QueryClientProvider client={queryClient}>
-                    {children}
-                </QueryClientProvider>
-            </SidebarProvider>
+            <QueryClientProvider client={queryClient}>
+                {children}
+            </QueryClientProvider>
         </ThemeProvider>
     )
 }

@@ -4,7 +4,9 @@ import "./globals.css";
 import Providers from "@/app/providers";
 import {Toaster} from "@/components/ui/sonner";
 import {AppSidebar} from "@/components/sidebar";
-import {SidebarTrigger} from "@/components/ui/sidebar";
+import {SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
+import {cookies, headers} from "next/headers";
+import {auth} from "@/lib/auth";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -22,11 +24,18 @@ export const metadata: Metadata = {
 };
 
 
-export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
+export default async function RootLayout({
+                                             children,
+                                         }: Readonly<{
     children: React.ReactNode;
 }>) {
+
+    const cookieStore = await cookies();
+    const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
+    const sessData = await auth.api.getSession({
+        headers: await headers(),
+    });
+
 
     return (
         <html lang="en" suppressHydrationWarning>
@@ -36,10 +45,20 @@ export default function RootLayout({
 
         <Toaster richColors/>
         <Providers>
-            <AppSidebar/>
-            <main>
-                <SidebarTrigger/>
-                {children}</main>
+            <SidebarProvider defaultOpen={defaultOpen}>
+
+
+                <AppSidebar user={sessData ? {
+                    email: sessData.user.email,
+                    name: sessData.user.name,
+                    id: sessData.user.id,
+                    image: sessData.user.image,
+                } : false}/>
+                <main className={"grow"}>
+                    <SidebarTrigger/>
+                    {children}
+                </main>
+            </SidebarProvider>
         </Providers>
         </body>
         </html>
