@@ -22,8 +22,8 @@ export default async function Home() {
   });
 
   return (
-    <div className="container max-w-screen-lg mx-auto px-20">
-      <h1 className="text-3xl font-bold mt-24 px-4">
+    <div className="container max-w-screen-lg mx-auto px-4 sm:px-20">
+      <h1 className="text-3xl font-bold mt-24">
         Hello, Welcome to Pulth Articles!
       </h1>
       <p>You can solve quizzes, read articles and discuss the new topics</p>
