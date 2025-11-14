@@ -13,7 +13,6 @@ export default function InlineRenderer(props: { text: string }) {
             // a: 'ul'
         }
     });
-    console.log({text: props.text, clean: cleanData});
 
     return <span dangerouslySetInnerHTML={{__html: cleanData}}/>;
 }
