@@ -1,8 +1,9 @@
-import {dehydrate, HydrationBoundary, QueryClient} from "@tanstack/react-query";
+import {dehydrate, HydrationBoundary, QueryClient, useQuery} from "@tanstack/react-query";
 import {getArticleBySlug, getArticles, getAuthorBySlug, getTagsOnArticleBySlug} from "@/app/actions/article";
 import ArticleRenderer from "@/app/articles/[slug]/ArticleRenderer";
 import {Metadata} from "next";
 import TagList from "@/app/articles/[slug]/TagList";
+import ArticleNavigation from "@/app/articles/[slug]/ArticleNavigation";
 
 export async function generateMetadata(
     {
@@ -59,19 +60,32 @@ export default async function ArticleSlugPage(
         queryFn: () => getAuthorBySlug(slug)
     })
 
-    const tagsPrefecth = queryClient.prefetchQuery({
+    const tagsPrefetch = queryClient.prefetchQuery({
         queryKey: ["articles", slug, "tags"],
         queryFn: () => getTagsOnArticleBySlug(slug)
     })
 
-    await Promise.all([articlePrefetch, authorPrefetch, tagsPrefecth]);
+    await Promise.all([articlePrefetch, authorPrefetch, tagsPrefetch]);
+
 
     return <div className="select-text dark:selection:text-indigo-500">
         <HydrationBoundary state={dehydrate(queryClient)}>
             <ArticleRenderer/>
+
+            {/* related articles / navigational links
+                maybe after author info
+            */}
+            <ArticleNavigation slug={slug}/>
+
+            {/*    Votes  upvote, downvote*/}
             <TagList/>
+            {/*0*/}
+            {/*    Article Author image & name and visit btn*/}
         </HydrationBoundary>
-        <div>Comments:</div>
+
+
+        {/* %d Comments*/}
+        <div className="container mx-auto max-w-3xl">Comments:</div>
     </div>
 
 }
