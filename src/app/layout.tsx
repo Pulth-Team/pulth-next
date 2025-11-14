@@ -5,8 +5,8 @@ import Providers from "@/app/providers";
 import {Toaster} from "@/components/ui/sonner";
 import {AppSidebar} from "@/components/sidebar";
 import {SidebarInset, SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar";
-import {cookies, headers} from "next/headers";
-import {auth} from "@/lib/auth";
+
+import {GoogleTagManager} from '@next/third-parties/google'
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -39,6 +39,9 @@ export default async function RootLayout({
         <body
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
+        {/*// <!-- Google tag (gtag.js) -->*/}
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID ?? ""}/>
+
         <Toaster richColors/>
         <Providers>
             <SidebarProvider defaultOpen={true}>
