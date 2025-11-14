@@ -23,6 +23,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
     });
 
+    // every user with at least one published article
+    const authors = await prisma.user.findMany({
+        where: {
+            articles: {
+                some: {
+                    isPublished: true,
+                }
+            }
+        }
+    });
+
     // Generate article URLs
     const articleUrls: MetadataRoute.Sitemap = articles.map((article) => ({
         url: `${baseUrl}/articles/${article.slug}`,
@@ -37,6 +48,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: topic.updatedAt,
         changeFrequency: "weekly",
         priority: 0.7,
+    }));
+
+    // Generate author URLs
+    const authorUrls: MetadataRoute.Sitemap = authors.map((author) => ({
+        url: `${baseUrl}/users/${author.id}`,
+        lastModified: new Date(),
+        changeFrequency: "monthly",
+        priority: 0.6,
     }));
 
     // Static routes
@@ -85,5 +104,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
     ];
 
-    return [...staticRoutes, ...articleUrls, ...tagUrls];
+    return [...staticRoutes, ...articleUrls, ...tagUrls, ...authorUrls];
 }
