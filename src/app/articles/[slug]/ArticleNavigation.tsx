@@ -17,7 +17,7 @@ export default async function ArticleNavigation(props: { slug: string }) {
 
 
     return (
-        <div className="flex justify-between mt-8 pb-16 max-w-screen">
+        <div className="flex justify-between mt-8 pb-4 mb-12 max-w-screen flex-wrap">
             {previousArticle ? (
                     <Button
                         asChild
@@ -26,7 +26,7 @@ export default async function ArticleNavigation(props: { slug: string }) {
                     >
                         <Link
                             href={`/articles/${previousArticle.slug}`}
-                            className="text-blue-600 hover:underline truncate max-w-fit"
+                            className="text-blue-600 hover:underline truncate max-w-fit min-w-max"
                         >
                             &larr; {previousArticle.title}
                         </Link>
@@ -44,7 +44,7 @@ export default async function ArticleNavigation(props: { slug: string }) {
                 >
                     <Link
                         href={`/articles/${nextArticle.slug}`}
-                        className="text-blue-600 hover:underline truncate max-w-fit ml-auto"
+                        className="text-blue-600 hover:underline truncate max-w-fit ml-auto min-w-max"
                     >
                         {nextArticle.title} &rarr;
                     </Link>
