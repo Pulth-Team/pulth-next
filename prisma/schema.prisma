@@ -18,9 +18,9 @@ model User {
   emailVerified  Boolean          @default(false)
   image          String?
   description    String           @default("Hi im new here")
-  Article        Article[]
+  articles       Article[]
   scores         Score[]
-  TagsOnArticles TagsOnArticles[]
+  tagsOnArticles TagsOnArticles[]
   accounts       Account[]
   sessions       Session[]
 
