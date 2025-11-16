@@ -42,8 +42,14 @@ export default async function RootLayout({
             className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
         {/*// <!-- Google tag (gtag.js) -->*/}
-        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID ?? ""}/>
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GTM_ID ?? ""}/>
+        {
+            process.env.NEXT_PUBLIC_GTM_ID && (
+                <>
+                    <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID}/>
+                    <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GTM_ID}/>
+                </>
+            )
+        }
 
 
         <Toaster richColors/>
