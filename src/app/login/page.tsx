@@ -1,4 +1,12 @@
 import {LoginForm} from "@/app/login/loginForm";
+import {Metadata} from "next";
+
+export const metadata: Metadata = {
+    title: "Login | Pulth",
+    description: "Login to your Pulth account to access exclusive features and content. Join our community now!",
+    keywords: "login, pulth, account, access, community",
+    applicationName: "Pulth.com",
+};
 
 export default function Login() {
     return (

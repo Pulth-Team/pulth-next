@@ -3,6 +3,27 @@ import {getQueryClient} from "@/app/api/query";
 import {dehydrate, HydrationBoundary} from "@tanstack/react-query";
 import AuthorInfo from "@/app/articles/[slug]/AuthorInfo";
 import ArticlesList from "@/app/articles/ArticleList";
+import prisma from "@/lib/prisma";
+
+//generate metadata for user profile page
+export async function generateMetadata(props: { params: { userId: string } }) {
+    const {userId} = props.params;
+
+    const userData = await prisma.user.findUnique({
+        where: {id: userId},
+        select: {
+            name: true,
+            description: true,
+        },
+    })
+
+    return {
+        title: userData ? `${userData.name}'s Profile | Pulth` : 'User Profile | Pulth',
+        description: userData?.description || `Profile page for user ${userId} on Pulth.`,
+        keywords: `user, profile, ${userData?.name || ''}, pulth`,
+        applicationName: "Pulth.com",
+    }
+}
 
 export default async function UserIdPage(props: PageProps<"/users/[userId]">) {
     const {userId} = await props.params;
