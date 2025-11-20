@@ -52,11 +52,14 @@ export default async function ArticleSlugPage(
     const {slug} = await params;
 
     const queryClient = getQueryClient();
+
+    // used in ArticleRenderer
     const articlePrefetch = queryClient.prefetchQuery({
         queryKey: ['articles', slug],
         queryFn: () => getArticleBySlug(slug)
     });
 
+    // used in AuthorInfo
     const authorPrefetch = queryClient.prefetchQuery({
         queryKey: ["articles", slug, "author"],
         queryFn: () => getAuthorBySlug(slug)
@@ -84,7 +87,6 @@ export default async function ArticleSlugPage(
 
             {/*    Votes  upvote, downvote*/}
             <TagList/>
-            {/*0*/}
             {/*    Article Author image & name and visit btn*/}
         </HydrationBoundary>
 

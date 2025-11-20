@@ -7,6 +7,8 @@ import {
     CreditCard,
     LogOut,
     Sparkles,
+    Settings,
+
 } from "lucide-react"
 
 import {
@@ -39,9 +41,10 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
+import Link from "next/link";
 
 export function NavUser(props: { image: string, name: string, email: string, id: string }) {
-    const {isMobile,} = useSidebar();
+    const {isMobile, setOpenMobile} = useSidebar();
     const router = useRouter();
 
     return (
@@ -97,10 +100,17 @@ export function NavUser(props: { image: string, name: string, email: string, id:
                                     <BadgeCheck/>
                                     Account
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <CreditCard/>
-                                    Billing
+                                <DropdownMenuItem onClick={() => {
+                                    // close sidebar if mobile
+                                    if (isMobile)
+                                        setOpenMobile(false);
+                                }}>
+                                    <Settings/>
+                                    <Link href={`/settings`} className="flex items-center w-full">
+                                        Settings
+                                    </Link>
                                 </DropdownMenuItem>
+
                                 <DropdownMenuItem>
                                     <Bell/>
                                     Notifications
