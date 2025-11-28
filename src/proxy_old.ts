@@ -3,7 +3,7 @@ import type {NextRequest} from 'next/server'
 
 
 // This function can be marked `async` if using `await` inside
-export function proxy(request: NextRequest) {
+export function proxy_old(request: NextRequest) {
 
     const ua = userAgent(request);
 
@@ -43,5 +43,5 @@ export function proxy(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-    matcher: ['/genuine/:path*'],
+    matcher: ['/genuine/:path*', '/genuine/static/:path*'],
 }
