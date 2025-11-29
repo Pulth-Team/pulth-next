@@ -102,12 +102,10 @@ export function LoginForm({
                                                 rememberMe: rememberMe,
                                             });
                                             posthog.opt_in_capturing();
-
                                             toast.success("Logged in successfully!");
                                         }
                                     })
                                 }}>Login</Button>
-
                                 <Button variant="outline" disabled={loading} type="button" onClick={() => {
                                     signIn.social({
                                         provider: "google",
@@ -119,13 +117,12 @@ export function LoginForm({
                                         onResponse: (ctx) => {
                                             setLoading(false);
                                         },
-                                        onSuccess: (ctx) => {
-                                            posthog.identify(ctx.data.user.id, {
-                                                method: "google-login",
-                                                rememberMe: rememberMe,
-                                            });
-
-                                            posthog.opt_in_capturing()
+                                        onSuccess: () => {
+                                            // posthog.identify(ctx.data.user.id, {
+                                            //     method: "google-login",
+                                            //     rememberMe: rememberMe,
+                                            // });
+                                            // posthog.opt_in_capturing()
                                         }
                                     });
                                 }}>
