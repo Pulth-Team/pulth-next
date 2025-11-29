@@ -42,6 +42,7 @@ import {
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import Link from "next/link";
+import posthog from "posthog-js";
 
 export function NavUser(props: { image: string, name: string, email: string, id: string }) {
     const {isMobile, setOpenMobile} = useSidebar();
@@ -142,9 +143,9 @@ export function NavUser(props: { image: string, name: string, email: string, id:
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction type={"submit"} onClick={async () => {
                                     await signOut();
+                                    posthog.reset();
                                     router.refresh()
-
-                                }}>Log off</AlertDialogAction>
+                                }}>Log out</AlertDialogAction>
                             </form>
                         </AlertDialogFooter>
                     </AlertDialogContent>

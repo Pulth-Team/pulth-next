@@ -25,6 +25,10 @@ export const auth = betterAuth({
             role: {
                 type: "string",
                 defaultValue: "user",
+            },
+            description: {
+                type: "string",
+                defaultValue: "Hi I'm new here!",
             }
         }
     },

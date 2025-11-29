@@ -12,6 +12,7 @@ import {useState} from "react";
 import Link from "next/link";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Label} from "@/components/ui/label";
+import posthog from "posthog-js";
 
 export function LoginForm({
                               className,
@@ -96,6 +97,12 @@ export function LoginForm({
                                             toast.error(ctx.error.message);
                                         },
                                         onSuccess: (ctx) => {
+                                            posthog.identify(ctx.data.user.id, {
+                                                method: "email-login",
+                                                rememberMe: rememberMe,
+                                            });
+                                            posthog.opt_in_capturing();
+
                                             toast.success("Logged in successfully!");
                                         }
                                     })
@@ -112,6 +119,14 @@ export function LoginForm({
                                         onResponse: (ctx) => {
                                             setLoading(false);
                                         },
+                                        onSuccess: (ctx) => {
+                                            posthog.identify(ctx.data.user.id, {
+                                                method: "google-login",
+                                                rememberMe: rememberMe,
+                                            });
+
+                                            posthog.opt_in_capturing()
+                                        }
                                     });
                                 }}>
                                     Login with Google

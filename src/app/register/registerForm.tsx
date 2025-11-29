@@ -14,6 +14,7 @@ import {useState} from "react";
 
 import {useRouter} from "next/navigation";
 import Link from "next/link";
+import posthog from "posthog-js";
 
 export function RegisterForm() {
 
@@ -114,7 +115,11 @@ export function RegisterForm() {
                                         // throw ctx;   sadas
                                         toast.error(ctx.error.message);
                                     },
-                                    onSuccess: () => {
+                                    onSuccess: (ctx) => {
+                                        posthog.identify(ctx.data.user.id, {
+                                            method: "email-signup",
+                                        });
+
                                         router.push("/");
                                         toast.success("Account created successfully! Please check your email to verify your account.");
                                     }
