@@ -16,7 +16,7 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now()) @updatedAt
   emailVerified Boolean  @default(false)
-  image         String?
+  image         String?  @default("/default.jpg")
   description   String   @default("Hi im new here")
   role          String   @default("user")
 
@@ -25,6 +25,10 @@ model User {
   tagsOnArticles TagsOnArticles[]
   accounts       Account[]
   sessions       Session[]
+
+  follows   Follow[]  @relation("followerRelation")
+  followers Follow[]  @relation("followeeRelation")
+  comments  Comment[]
 
   @@map("user")
 }
@@ -142,6 +146,7 @@ model Article {
   draftBodyData  Json[]           @default([])
   author         User             @relation(fields: [authorId], references: [id])
   tagsOnArticles TagsOnArticles[]
+  comments       Comment[]
 }
 
 model TagsOnArticles {
@@ -154,4 +159,32 @@ model TagsOnArticles {
   topic        Topic    @relation(fields: [topicId], references: [id])
 
   @@unique([topicId, articleId])
+}
+
+model Follow {
+  id         String   @id @default(uuid())
+  followerId String
+  followeeId String
+  createdAt  DateTime @default(now())
+
+  follower User @relation("followerRelation", fields: [followerId], references: [id], onDelete: Cascade)
+  followee User @relation("followeeRelation", fields: [followeeId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followeeId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  articleId String
+  authorId  String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  author  User    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  parentId String?
+  parent   Comment?  @relation("CommentToChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  Comment  Comment[] @relation("CommentToChildren")
 }
