@@ -62,7 +62,7 @@
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.5",
     "eslint-plugin-react": "^7.37.5",
-    "prisma": "^7.0.1",
+    "prisma": "^7.6.0",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
