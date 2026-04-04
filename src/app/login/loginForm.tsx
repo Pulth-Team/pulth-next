@@ -142,7 +142,6 @@ export function LoginForm({
                           setLoading(false);
                         },
                         onSuccess: (ctx) => {
-                          console.log(ctx);
                           // posthog.identify(ctx.data.user.id, {
                           //   method: "google-login",
                           //   rememberMe: rememberMe,
