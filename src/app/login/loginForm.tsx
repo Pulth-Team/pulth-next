@@ -107,16 +107,17 @@ export function LoginForm({
                           setLoading(false);
                         },
                         onError: (ctx) => {
+                          console.log(ctx);
                           toast.error(ctx.error.message);
                         },
                         onSuccess: (ctx) => {
                           console.log(ctx.response.body);
-                          posthog.identify(ctx.data.user.id, {
-                            method: "email-login",
-                            rememberMe: rememberMe,
-                          });
-                          posthog.opt_in_capturing();
-                          toast.success("Logged in successfully!");
+                          // posthog.identify(ctx.data.user.id, {
+                          //   method: "email-login",
+                          //   rememberMe: rememberMe,
+                          // });
+                          // posthog.opt_in_capturing();
+                          // toast.success("Logged in successfully!");
                         },
                       },
                     );
