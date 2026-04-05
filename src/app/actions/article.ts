@@ -2,70 +2,73 @@
 
 // get articles
 import prisma from "@/lib/prisma";
-import {BlockWithFallback, BlockWithFallbackSchema} from "@/schemas/EditorTypes";
-import {InputJsonValue} from "@/generated/prisma-client/runtime/library";
+import {
+  BlockWithFallback,
+  BlockWithFallbackSchema,
+} from "@/schemas/EditorTypes";
+import { InputJsonValue } from "@prisma/client/runtime/client";
 
 export async function getArticles() {
-    // Placeholder for fetching articles from a database or API
-    return prisma.article.findMany({where: {isPublished: true}});
+  // Placeholder for fetching articles from a database or API
+  return prisma.article.findMany({ where: { isPublished: true } });
 }
 
 export async function getArticleBySlug(slug: string) {
-    const article = await prisma.article.findUnique({where: {slug: slug}});
+  const article = await prisma.article.findUnique({ where: { slug: slug } });
 
-    if (!article) {
-        throw new Error("Article not found");
-    }
-    return article;
+  if (!article) {
+    throw new Error("Article not found");
+  }
+  return article;
 }
-
 
 export async function getAuthorBySlug(slug: string) {
-    // bad request example
+  // bad request example
 
-    const author = await prisma.article.findUnique({where: {slug: slug}}).author();
+  const author = await prisma.article
+    .findUnique({ where: { slug: slug } })
+    .author();
 
-    if (!author) {
-        throw new Error("Author not found");
-    }
+  if (!author) {
+    throw new Error("Author not found");
+  }
 
-    return author;
+  return author;
 }
 
-
 export async function publishArticle(slug: string, body: BlockWithFallback[]) {
-    // Warning: Security problem?
-    const parsedBody = BlockWithFallbackSchema.array().parse(body);
+  // Warning: Security problem?
+  const parsedBody = BlockWithFallbackSchema.array().parse(body);
 
-    const article = await prisma.article.findUnique({where: {slug: slug}});
+  const article = await prisma.article.findUnique({ where: { slug: slug } });
 
-    if (!article) {
-        throw new Error("Article not found");
-    }
+  if (!article) {
+    throw new Error("Article not found");
+  }
 
-    const updateRes = await prisma.article.update({
-        data: {
-            bodyData: parsedBody as unknown as InputJsonValue[],
-            draftBodyData: article.bodyData as unknown as InputJsonValue[]
-        },
-        where: {
-            slug: slug
-        }
-    })
+  const updateRes = await prisma.article.update({
+    data: {
+      bodyData: parsedBody as unknown as InputJsonValue[],
+      draftBodyData: article.bodyData as unknown as InputJsonValue[],
+    },
+    where: {
+      slug: slug,
+    },
+  });
 
-    return updateRes;
+  return updateRes;
 }
 
 export async function getTagsOnArticleBySlug(slug: string) {
-    return prisma.tagsOnArticles.findMany({
-        where: {
-            article: {
-                slug: slug
-            }
-        },
-        include: {
-            article: true,
-            topic: true
-        }
-    });
+  return prisma.tagsOnArticles.findMany({
+    where: {
+      article: {
+        slug: slug,
+      },
+    },
+    include: {
+      article: true,
+      topic: true,
+    },
+  });
 }
